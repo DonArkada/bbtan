@@ -49,10 +49,6 @@ var Mouse = function(){
 }
 var mouse = new Mouse();
 
-window.addEventListener('resize', function(){
-  init();
-});
-
 canvas.addEventListener('mousemove', function(e){
   mouse.x = e.layerX;
   mouse.y = e.layerY;
@@ -68,7 +64,7 @@ canvas.addEventListener('click', function(e){
 var Player = function(){
   this.balls = 10;
   this.ballsLeft = 0;
-  this.x = 200;
+  this.x = this.nextX = 200;
   this.y = 547;
   this.pointerLength = 40;
   this.shoot = false;
@@ -81,7 +77,7 @@ var Player = function(){
     c.beginPath();
     c.moveTo(this.x, this.y);
     let v=vectorjednostkowy(this.x, this.y, mouse.x, mouse.y);
-    c.lineTo(this.x+v[0]*40, this.y+v[1]*40);
+    c.lineTo(this.x+v[0]*80, this.y+v[1]*80);
     c.strokeStyle = "#f00";
     c.stroke();
   }
@@ -169,7 +165,7 @@ var Ball = function(x,y,dx,dy){
   this.dx = dx;
   this.dy = dy;
   this.r = 2;
-  this.speed = 4;
+  this.speed = 6;
   this.delete = false;
 
   this.draw = function(){
@@ -190,7 +186,7 @@ var Ball = function(x,y,dx,dy){
       this.dx*=-1;
     if(this.y+this.r>=canvas.height){//check for bottom end of screan
       this.delete = true;
-      player.x = this.x;
+      player.nextX = this.x;
     }
 
     for(let i = 0; i< points.length; i++){
@@ -307,6 +303,7 @@ var animation = function(){
 
     if(balls.length == 0){//jak nie ma pilek
       player.canShoot = true;//no balls left you can shoot again
+      player.x = player.nextX;
       for (var i = 0; i < squares.length; i++) {//przelec przez kwadraty
         squares[i].y+=45;//i je obniz o stopien
       }
